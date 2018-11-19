@@ -1,0 +1,17 @@
+<nav class="light-blue">
+  <div class="nav-wrapper container"><a id="logo-container" href="index.html" class="brand-logo">Progetto Basi</a>   
+    <ul class="right" id="menuNavBar">    
+      <li><div class="input-field cerca"><input id="search" placeholder="Cerca" type="search" required><label for="search"></label><i class="material-icons">close</i></div></li>
+      <li> <a data-target="modal1" onclick="$('#loginModal').modal('open');">Accedi</a> </li>
+      <li> <a href="registrazione.html">Registrati</a> </li>
+    </ul>
+  </div>
+</nav>
+
+<ul id="profilo" class="dropdown-content">
+  <li><a class="blue-text" href="mieiOrdini.html">I miei ordini</a></li>
+  <li><a class="blue-text" href="mioProfilo.html">Il mio profilo</a></li>
+  <li id="pannelloAdmin"><a class="blue-text" href="pannelloAdmin.html">Pannello admin</a></li>
+  <li class="divider"></li>
+  <li><a class="blue-text" onclick="esci();">Esci</a></li>
+</ul>

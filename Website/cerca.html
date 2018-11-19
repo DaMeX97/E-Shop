@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="css/nouislider.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/wNumb.js" type="text/javascript"></script>
+    <script src="js/nouislider.js" type="text/javascript"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+
+    <style>
+      header, main, footer {
+        padding-left: 300px;
+      }
+
+      @media only screen and (max-width : 992px) {
+        header, main, footer {
+          padding-left: 0;
+        }
+      }
+
+      .sidenav{
+        top: 65px;
+        width: 250px;
+      }
+
+    </style>
+
+  </head>
+  <body>
+
+    <!-- NAV BAR -->
+    <div class="navbar-fixed" id="navbar">
+    </div>
+
+    <main>
+      <ul id="profilo" class="dropdown-content">
+        <li><a href="mieiOrdini.html">I miei ordini</a></li>
+        <li><a href="mioProfilo.html">Il mio profilo</a></li>
+        <li><a href="pannelloAdmin.html">Pannello admin</a></li>
+        <li class="divider"></li>
+        <li><a onclick="esci();">Esci</a></li>
+      </ul>
+
+      <ul id="slide-out" class="sidenav sidenav-fixed collection">
+        <li class="collection-item">Categorie</li>
+        <li class="collection-item">    
+
+          <ul id="listaCategorie">
+          </ul>
+        </li>
+
+        <li class="collection-item" id="prezzoSlider">Prezzo:</li>
+
+        <li class="collection-item">
+          <br>
+          <div id="test-slider"></div>
+        </li>
+
+        <li>
+          <a class="waves-effect waves-light btn blue" onclick="aggiornaFiltri();">Aggiorna</a>
+          <a class="waves-effect waves-light btn red" onclick="resetFiltri();">Resetta filtri</a>
+        </li>
+
+      </ul>
+
+      <!-- FINE NAV BAR -->
+
+      <!-- MODAL LOGIN -->
+      <div id="loginModal" class="modal">
+        <div class="modal-content">
+          <h4>Login</h4>
+          <form method="post" action="/API/login.php">
+            <div class="row">
+              <div class="input-field">
+                <input id="email" type="email" class="validate" name="email">
+                <label for="email">Email</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field">
+                <input id="password" type="password" class="validate" name="password">
+                <label for="password">Password</label>
+              </div>
+            </div>
+
+            <div class="modal-footer" style="text-align:center;">
+              <input type="submit" class="modal-close waves-effect btn blue lighten-2" value="Accedi">
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FINE MODAL LOGIN -->
+
+      <!-- CONTENUTO -->
+      <div class="container">
+        <div class="barra valign-wrapper">
+          <div class="col barra right-align">
+            <br>
+            <a class="waves-effect waves-light btn blue" id="visualizzazione" onclick="cambiaVisualizzazione();"><i class="material-icons left">dashboard</i></a>
+          </div>
+        </div>
+
+        <br>
+
+
+        <table class="center-align" align="center" id="tabellaProdotti">
+          <!-- CONTENUTO TABELLA -->
+        </table>
+
+
+        <ul class="collection" id="listaProdotti">
+        </ul>
+
+        <ul class="pagination col" id="pagine">
+        </ul>
+
+      </div>
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+
+    </main>
+
+    <!-- FINE CONTENUTO -->
+
+    <div id="footer">
+    </div>
+
+    <script>
+      var url_string = window.location.href;
+      var url = new URL(url_string);
+      var n = 20;
+      var page = url.searchParams.get("page");
+      var q = url.searchParams.get("q");
+      var categoria = url.searchParams.get("cat");
+      var prezzoIniziale = url.searchParams.get("pda");
+      var prezzoFinale = url.searchParams.get("pa");
+
+      if(page == null)
+        page = 1;
+      if(prezzoIniziale == null)
+        prezzoIniziale = 0;
+      if(prezzoFinale == null)
+        prezzoFinale = 2000;
+      if(categoria == null)
+        categoria = -1;
+      if(q == null)
+        q = "";
+
+      var slider = document.getElementById('test-slider');
+      noUiSlider.create(slider, {
+        start: [prezzoIniziale, prezzoFinale],
+        connect: true,
+        step: 20,
+        orientation: 'horizontal', // 'horizontal' or 'vertical'
+        range: {
+          'min': 0,
+          'max': 2000
+        },
+        format: wNumb({
+          decimals: 0
+        })
+      });
+
+      var rangeSlider = document.getElementById('test-slider');
+      // update stringa prezzo
+      rangeSlider.noUiSlider.on('update', function( values, handle ) {
+        prezzoIniziale = parseInt(values[0]);
+        prezzoFinale = parseInt(values[1]);
+        $("#prezzoSlider").html("Prezzo da " + prezzoIniziale + " € a " + prezzoFinale + " €");
+      });
+
+      var listaOTabella = 1; // 0 = lista, 1 = tabella
+
+      function loadProdottiTabella(){
+        $.getJSON('/API/prodottiHome.php?page=' + page + '&n=' + n + '&q=' + q + "&cat=" + categoria + "&pda=" + prezzoIniziale + "&pa=" + prezzoFinale, function(data) {
+          colonne = 4;
+          righe = data.array.length / colonne;
+
+          inner = "";
+
+          for(var i = 0; i < data.array.length; i++){
+            if(i%colonne == 0)
+              inner += "<tr>";
+            inner += "<td>";
+
+            inner += "<div class='col'><a href='prodotto.html?id=" + data.array[i].idProdotto + "'><div class='card center-align valing-wrapper'><div class='card-image'><img class='card-img' src='img/prodotti/" + data.array[i].idProdotto + "'  onerror='defaultImage(this);'><a onclick='aggiungiAlCarrello("+data.array[i].idProdotto+", 1);' class='btn-floating pulse halfway-fab waves-effect waves-light blue'><i class='material-icons'>local_grocery_store</i></a></div><div class='card-content'><p>" +  data.array[i].Marca + " - " + data.array[i].Modello + "</p><br><div class='chip blue lighten-4 prezzo'>" + data.array[i].Prezzo + " €</div></div></a></div>";
+
+            inner += "</td>";    
+
+            if(i%colonne == (colonne-1))
+              inner += "</tr>";
+          }
+
+          $("#tabellaProdotti").html(inner);
+          var numTotale = data.num;
+          var pagine = numTotale/n + 1;
+
+          if(pagine > 1){
+            inner = "<li class='freccia waves-effect pag'><a href='#!'><i class='material-icons' onclick='frecciaIndietro(this)'>chevron_left</i></a></li>";
+            for(var i = 1; i <= pagine; i++){
+              inner += "<li class='waves-effect pag'><a onclick='clickPagination(this)'>" + i + "</a></li>"
+            }
+            inner += "<li class='freccia waves-effect pag' ><a onclick='frecciaAvanti(this)'><i class='material-icons'>chevron_right</i></a></li>";
+
+            $("#pagine").html(inner);
+
+            var temp = $("#pagine").children().toArray()[page];
+            $(temp).addClass("active");
+          }
+
+        });
+      }
+
+      loadProdottiTabella();
+
+      function loadProdottiLista(){
+        $.getJSON('/API/prodottiHome.php?page=' + page + '&n=' + n + '&q=' + q + "&cat=" + categoria + "&pda=" + prezzoIniziale + "&pa=" + prezzoFinale , function(data) {
+          colonne = 5;
+          righe = data.array.length / colonne;
+
+          inner = "";
+
+          for(var i = 0; i < data.array.length; i++){
+            inner += '<li class="collection-item avatar"><div class="barra row valign-wrapper"><a href="prodotto.html?id=' + data.array[i].idProdotto + '"><img class="card-img-list" src="/img/prodotti/'+data.array[i].idProdotto+'" onerror="defaultImage(this);"></img></a><p>' + data.array[i].Marca + ' '  + data.array[i].Modello +'<br>Quantità: ' + data.array[i].Quantita + '<br>Descrizione: ' + data.array[i].Descrizione + '<br>Prezzo: ' + data.array[i].Prezzo + ' €</p><div class="secondary-content"><br><br><a onclick="aggiungiAlCarrello('+data.array[i].idProdotto+', 1);" class="btn-floating pulse halfway-fab waves-effect waves-light blue"><i class="material-icons">local_grocery_store</i></a></div></div></li>';
+          }
+
+          $("#listaProdotti").html(inner);
+        });
+      }
+
+      loadProdottiLista();
+
+      $("#tabellaProdotti").show();
+      $("#listaProdotti").hide();
+      $("#visualizzazione").html("<i class='material-icons'>format_list_bulleted</i>");
+
+      function cambiaVisualizzazione(){
+        if(listaOTabella == 0){
+          $("#visualizzazione").html("<i class='material-icons'>format_list_bulleted</i>");
+          $("#listaProdotti").hide();
+          $("#tabellaProdotti").show();
+
+          listaOTabella = 1;
+        }
+        else{
+          $("#visualizzazione").html("<i class='material-icons'>dashboard</i>");
+          $("#tabellaProdotti").hide();
+          $("#listaProdotti").show();
+
+          listaOTabella = 0;
+        }
+      }
+
+      loadBarraLaterale();
+
+      function loadBarraLaterale(){
+        $.getJSON("/API/categorie.php", function(data){
+          var inner = '<label><input name="categoria" type="radio" checked value="-1" id="-1" /><span>Tutte</span></label>';
+          for(var i=0; i<data.length; i++){
+            inner += '<br><label><input name="categoria" type="radio" value="' + data[i].idCategoria +'" id="' + data[i].idCategoria +'"/><span>' + data[i].Nome + '</span></label>';
+          }
+          $("#listaCategorie").html(inner);
+          $("#" + categoria).prop('checked',true);
+          $("#search").val(q);
+        });
+      }
+
+      function aggiornaFiltri(){
+        var checkboxValues = [];
+        $('input[name=categoria]:checked').map(function() {
+          checkboxValues.push($(this).val());
+        });
+        categoria = checkboxValues[0];
+
+        window.location.href = 'cerca.html?page=' + page + '&n=' + n + '&q=' + q + "&cat=" + categoria + "&pda=" + prezzoIniziale + "&pa=" + prezzoFinale;
+      }
+
+      function resetFiltri(){
+        categoria = -1;
+        prezzoIniziale = 0;
+        prezzoFinale = 2000;
+
+        window.location.href = 'cerca.html?q=' + q;
+      }
+
+
+      function clickPagination(data){
+        var page = data.innerHTML;
+        var n = 20
+
+        window.location.href = "cerca.html?n=" + n + "&page=" + page;
+      }
+
+      function frecciaAvanti(data){
+        var ora = $(".active.pag");
+        var succ = ora.next();
+
+        if(succ.hasClass("freccia"))
+          succ = succ.parent().children()[1];
+
+        $(ora).removeClass("active");
+        $(succ).addClass("active");
+
+        var page = $($(succ).html()).html();
+        var n = 20;
+
+        window.location.href = "cerca.html?&n=" + n + "&page=" + page;
+      }
+
+      function frecciaIndietro(data){
+        var ora = $(".active.pag");
+        var prev = ora.prev();
+
+        if(prev.hasClass("freccia"))
+          prev = prev.parent().children()[prev.parent().children().length - 2];
+
+        $(ora).removeClass("active");
+        $(prev).addClass("active");
+
+        var page = $($(prev).html()).html();
+
+        var n = 20;
+
+        window.location.href = "cerca.html?n=" + n + "&page=" + page;
+      }
+
+    </script>
+
+  </body>
+</html>

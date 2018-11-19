@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+    <script src='js/checkes.js' type='text/javascript'></script>
+  </head>
+  <body>
+
+    <main>
+
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- FINE NAV BAR -->
+
+
+      <!-- CONTENUTO -->
+      <div class="container">
+        <h3>I miei ordini</h3>
+
+        <ul id="listaOrdini" class="collection">
+        </ul>
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+
+      <div id="footer">
+      </div>
+
+      <!-- FINE FOOTER -->
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+      <script>
+      	checkUtente();
+        var id = sessionStorage.getItem("idUtente");
+        $.getJSON("/API/mieiOrdini.php?id="+id, function(data){
+          var inner= '';
+          for(var i=0; i< data.length ; i++){
+            var totale = 0;
+            var stato = "In preparazione alla spedizione";
+            if(data[i].Stato == 1)
+            	stato = "In preparazione alla spedizione";
+            else if(data[i].Stato == 2)
+            	stato = "Spedito";
+            else if(data[i].Stato == 3)
+            	stato = "Consegnato";
+            
+            
+            inner += '<li class="collection-item"><h5>Ordine id ' + data[i].id + ' del ' + reverse(data[i].data) + ' - ' + stato + '</h5><br>Prodotti ordinati:<ul class = "collection">';
+            for(var j=0; j<data[i].prodotti.length ; j++){
+              inner += '<li class="collection-item avatar"><a href="prodotto.html?id=' + data[i].prodotti[j].idProdotto + '"><div class="barra row valign-wrapper"><img class="card-img-list" src="/img/prodotti/'+data[i].prodotti[j].idProdotto+'" onerror="defaultImage(this);"></img><p>' + data[i].prodotti[j].Marca + ' '  + data[i].prodotti[j].Modello +'</p><div class="secondary-content"><br><br><div class="chip blue lighten-4 prezzo">' + data[i].prodotti[j].Prezzo + ' €</div><br>Quantità acquistata: ' + data[i].prodotti[j].Quantita_Nel_Ordine + '</div></div></a></li>';
+              totale += parseFloat(data[i].prodotti[j].Prezzo) * data[i].prodotti[j].Quantita_Nel_Ordine;
+            }
+
+
+            inner += '</ul>Totale: ' + totale + ' €<br>Pagato con: ' + data[i].pagamento + '</li>'
+          }
+          $("#listaOrdini").html(inner); // va a prendere l'oggetto "listaOrdini" e il ".html" mette dentro il contenuto in html
+        });
+      </script>
+
+    </main>
+  </body>
+</html>

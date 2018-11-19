@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+    <script src='js/checkes.js' type='text/javascript'></script>
+  </head>
+  <body>
+
+    <main>
+
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- FINE NAV BAR -->
+
+
+      <!-- CONTENUTO -->
+      <div class="container">
+        <div class="" id="contenuto">
+          <ul class="collection" id="listaProdotti">
+          </ul>
+
+          <div class="center row">
+
+            <h5 id="totale" class="right-align"></h5>
+            <a href="pagamento.html" class="waves-effect waves-light btn blue">Procedi con il Pagamento</a>            
+          </div>
+        </div>
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+
+      <div id="footer">
+      </div>
+
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+      <script>
+
+        checkUtente();
+
+        function loadCarrello(){
+
+          $.getJSON('/API/carrello.php?idUtente='+sessionStorage.getItem("idUtente"), function(data) {
+
+            var inner = "";
+            var totale = 0;
+
+            for(var i = 0; i < data.length; i++){
+              totale += parseFloat(data[i].Prezzo)*data[i].Quantita_Nel_Carrello;    
+              inner += '<li class="collection-item avatar"><div class="barra row valign-wrapper"><img class="card-img-list" src="/img/prodotti/'+data[i].idProdotto+'" onerror="defaultImage(this);"></img><p>' + data[i].Marca + ' '  + data[i].Modello +'<br>Quantità: ' + data[i].Quantita + '<br>Descrizione: ' + data[i].Descrizione +' </p><div class="secondary-content"><br><br><div class="chip blue lighten-4 prezzo">' + data[i].Prezzo + ' €</div><a href="#" onclick="eliminaDalCarrello('+data[i].idProdotto+');"><i class="material-icons small red-text">delete</i></a><br>Quantità nel carrello: ' + data[i].Quantita_Nel_Carrello + '</br></div></div></li>';
+            }
+            $("#totale").html("Totale: " + totale+" €" );
+            $("#listaProdotti").html(inner);
+
+            if(data.length == 0){
+              $("#contenuto").html('<div class="center"><div class="col s12 m6"><div class="card white"><div class="card-content black-text"><span class="card-title "><h3>Il carrello è vuoto.<br>Aggiungi dei prodotti al tuo carrello per poter proseguire.</h3></span></div><div class="card-action"><a href="http://progettobasi2018.altervista.org">continua sul nostro sito</a></div></div></div></div>');
+            }
+
+          });
+        }
+        loadCarrello();
+
+        function eliminaDalCarrello(idProdotto){
+          window.location.href= '/API/eliminaDalCarrello.php?Utente_idUtente='+sessionStorage.getItem("idUtente")+'&Prodotto_idProdotto='+idProdotto;
+        }
+
+      </script>
+
+    </main>
+  </body>
+</html>

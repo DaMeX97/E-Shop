@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+
+  </head>
+  <body>
+
+    <main>
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- MODAL LOGIN -->
+      <div id="loginModal" class="modal">
+        <div class="modal-content">
+          <h4>Login</h4>
+          <form method="post" action="/API/login.php">
+            <div class="row">
+              <div class="input-field">
+                <input id="email" type="email" class="validate" name="email" required>
+                <label for="email">Email</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field">
+                <input id="password" type="password" class="validate" name="password" required>
+                <label for="password">Password</label>
+              </div>
+            </div>
+
+            <div class="modal-footer" style="text-align:center;">
+              <input type="submit" class="waves-effect btn blue lighten-2" value="Accedi">
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FINE MODAL LOGIN -->
+
+      <!-- FINE NAV BAR -->
+      <!-- CONTENUTO -->
+      <div class="container">
+        <div class="slider">
+          <ul class="slides">
+            <li>
+              <a href="cerca.html?q=pavilion">
+                <img src="/img/prodotti/PAVILIONEN.jpg">
+                <div class="caption center-align">
+                  <h3>HP Pavillion</h3>
+                  <h5 class="light grey-text text-lighten-3">All-in-one</h5>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="cerca.html?q=gtx 1080">
+                <img src="/img/prodotti/gtx1080.jpg">
+                <div class="caption center-align">
+                  <h3>Nuova GTX1080</h3>
+                  <h5 class="light grey-text text-lighten-3">Per il tuo gaming</h5>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="cerca.html?q=apple">
+                <img src="/img/prodotti/apple.jpg">
+                <div class="caption right-align">
+                  <h3>Apple</h3>
+                  <h5 class="light grey-text text-lighten-3">Tutti i prodotti apple di ultima generazione</h5>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <h5>Elettronica</h5>
+        <div class="containerCategoria">
+          <table class="responsive-table categoria" id="categoriaElettronica">
+          </table>
+        </div>
+        <h5>Telefoni</h5>
+        <div class="containerCategoria">
+          <table class="responsive-table categoria" id="categoriaTelefoni">
+          </table>
+        </div>
+        <br><br>
+
+        <div class="divider"></div>      
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+      <div id="footer">
+
+      </div>
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+
+      <script>
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+
+        if(url.searchParams.get("message")){
+          M.toast({html: url.searchParams.get("message") , classes: 'rounded'});
+        }
+
+
+        caricaCategorieHome();
+      </script>
+
+    </main>
+  </body>
+</html>

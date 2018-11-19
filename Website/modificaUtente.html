@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+    <script src='js/checkes.js' type='text/javascript'></script>
+  </head>
+  <body>
+
+    <main>
+
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- FINE NAV BAR -->
+
+      <!-- CONTENUTO -->
+      <div class="container center-align">   
+        <div class="row">
+          <h4>Modifica utente</h4>
+          <form class="col s12 center" method="post" action="/API/modificaUtente.php" id="formdati">
+            <div class="">
+              <div class="input-field col s6">
+                <input id="nome" type="text" class="validate" name="nome" required maxlength=45>
+                <label id="lblnome" for="nome">Nome</label>
+              </div>
+            </div>
+            <div class="">
+              <div class="input-field col s6">
+                <input id="cognome" type="text" class="validate" name="cognome" required maxlength=45>
+                <label id="lblcognome" for="cognome">Cognome</label>
+              </div>
+            </div>
+            <div class="">
+              <div class="input-field col s6">
+                <input id="indirizzo" type="text" class="validate" name="indirizzo" required maxlength=45>
+                <label id="lblindirizzo" for="indirizzo">Indirizzo</label>
+              </div>
+            </div>
+            <div class="">
+              <div class="input-field col s6">
+                <input id="telefono" type="text" class="validate" name="telefono" required maxlength=45>
+                <label id="lbltelefono" for="telefono">Telefono</label>
+              </div>
+            </div>
+            <div class="">
+              <div class="input-field col s6">
+                <input id="password" type="password" class="validate" name="password" required maxlength=45>
+                <label id="lblpassword" for="password">Password</label>
+              </div>
+            </div>
+            <div class="">
+              <div class="input-field col s6">
+                <input id="email" type="email" class="validate" name="email" required maxlength=45>
+                <label id="lblemail" for="email">Email</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s6 left-align">
+                Abilitato: <br>
+                <label>
+                  <input name="abilitato" id="abilitato" type="radio" checked value='1' />
+                  <span>Si</span>
+                </label>
+                <br>  
+                <label>
+                  <input name="abilitato" id="disabilitato" type="radio" value='0' />
+                  <span>No</span>
+                </label>
+
+              </div>
+
+            </div>
+            <button class="btn-flat waves-effect waves-light blue" type="submit" name="action">Aggiorna</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+      <div id="footer">
+      </div>
+
+      <!-- FINE FOOTER -->
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+      <script>
+        checkAdmin();
+        var url = new URL(window.location.href);
+        var id= url.searchParams.get("id");
+        $("#formdati").attr("action", "/API/modificaUtente.php?id="+id);
+        $.getJSON("/API/infoUtente.php?id="+ id ,function(data){
+          console.log(data);
+          $("#nome").val(data[0].Nome);
+          $("#lblnome").addClass("active");
+
+          $("#cognome").val(data[0].Cognome);
+          $("#lblcognome").addClass("active");
+
+          $("#indirizzo").val(data[0].Indirizzo);
+          $("#lblindirizzo").addClass("active");
+
+          $("#telefono").val(data[0].Telefono);
+          $("#lbltelefono").addClass("active");
+
+          $("#email").val(data[0].Email);
+          $("#lblemail").addClass("active");
+
+          $("#password").val(data[0].Password);
+          $("#lblpassword").addClass("active");
+
+          if(data[0].Visibile == 1)
+            $("#abilitato").prop('checked',true);
+          else $("#disabilitato").prop('checked',true);
+
+        }); // prende il risultato del file php e lo passa alla funzione function
+
+      </script>
+
+
+
+    </main>
+  </body>
+</html>

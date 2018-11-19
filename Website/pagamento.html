@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+    <script src='js/checkes.js' type='text/javascript'></script>
+  </head>
+  <body>
+
+    <main>
+
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- FINE NAV BAR -->
+
+
+      <!-- CONTENUTO -->
+      <div class="container center-align"> 
+      <form id="formProcedi" method="post" action="/API/nuovoOrdine.php?idUtente="> 
+        <p>
+          <label>
+            <input name="pagamento" type="radio" checked value="Bonifico bancario" />
+            <span>Bonifico bancario</span>
+          </label>
+        </p>
+        <p>
+          <label>
+            <input name="pagamento" type="radio" value="Carta di credito" />
+            <span>Carta di credito</span>
+          </label>
+        </p>
+        <p>
+          <label>
+            <input name="pagamento" type="radio" value="Contrassegno (+ 5€)" />
+            <span>Contrassegno (+ 5€)</span>
+          </label>
+        </p>
+        <input type="submit" class="waves-effect waves-light btn blue" value="Procedi con l'Ordine"/>
+		</form>
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+      <div id="footer">
+      </div>
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+      <script>
+      	checkUtente();
+      	$('#formProcedi').attr('action','/API/nuovoOrdine.php?idUtente='+sessionStorage.getItem('idUtente'));
+      </script>
+      
+
+    </main>
+  </body>
+</html>

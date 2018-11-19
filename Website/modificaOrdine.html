@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+    <script src='js/checkes.js' type='text/javascript'></script>
+  </head>
+  <body>
+
+    <main>
+
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- FINE NAV BAR -->
+
+      <!-- CONTENUTO -->
+      <div class="container center-align">   
+        <div class="row">
+          <form class="col s12 center valing-wrapper" method="post" action="/API/modificaOrdine.php" id="formdati">
+            <div>
+              <ul id="listaProdotti" class="collection">
+              </ul>
+
+              <div class="row" id="stato">
+                <div class="col s6 left-align">
+                  Stato <br>
+                  <label>
+                    <input name="stato" id="preparazione" type="radio" checked value='1' />
+                    <span>In preparazione alla spedizione</span>
+                  </label>
+
+                  <label>
+                    <input name="stato" id="spedito" type="radio" value='2' />
+                    <span>Spedito</span>
+                  </label>
+
+                  <label>
+                    <input name="stato" id="consegnato" type="radio" value='3' />
+                    <span>Consegnato</span>
+                  </label>
+                </div>
+
+                <div class="col s6 rigth-align">
+                  <h5 id="totale"></h5>
+                </div>
+              </div>
+            </div>
+            <button class="btn-flat waves-effect waves-light blue" type="submit" name="action">Aggiorna</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+      <div id="footer">
+      </div>
+
+      <!-- FINE FOOTER -->
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+      <script>
+      	checkAdmin();
+        var url = new URL(window.location.href);
+        var idOrdine= url.searchParams.get("id");
+
+        $.getJSON("/API/mieiOrdini.php?idOrdine="+idOrdine, function(data){
+          var inner= '';
+          for(var i=0; i< data.length ; i++){
+            var totale = 0;
+            inner += '<li class="collection-item"><h5>Ordine id ' + data[i].id + ' del ' + data[i].data + '</h5><br>Prodotti ordinati:<ul class = "collection">';
+            for(var j=0; j<data[i].prodotti.length ; j++){
+              inner += '<li class="collection-item avatar"><a href="prodotto.html?id=' + data[i].prodotti[j].idProdotto + '"><div class="barra row valign-wrapper"><img class="card-img-list" src="/img/prodotti/'+data[i].prodotti[j].idProdotto+'" onerror="defaultImage(this);"></img><p>' + data[i].prodotti[j].Marca + ' '  + data[i].prodotti[j].Modello +'</p><div class="secondary-content"><br><br><div class="chip blue lighten-4 prezzo">' + data[i].prodotti[j].Prezzo + ' €</div><br>Quantità acquistata: ' + data[i].prodotti[j].Quantita_Nel_Ordine + '</div></div></a></li>';
+              totale += parseFloat(data[i].prodotti[j].Prezzo) * data[i].prodotti[j].Quantita_Nel_Ordine;
+            }
+            
+            inner += '</ul>Totale: ' + totale + ' €<br>Pagato con: ' + data[i].pagamento + '</li>'
+          }
+          $("#listaProdotti").html(inner); // va a prendere l'oggetto "listaOrdini" e il ".html" mette dentro il contenuto in html
+          if(data[0].Stato == 1)
+            $("#preparazione").prop('checked',true);
+          else if(data[0].Stato == 2)
+          	$("#spedito").prop('checked',true);
+          else if(data[0].Stato == 3) $("#consegnato").prop('checked',true);
+
+
+        });
+
+        $("#formdati").attr("action", "/API/modificaOrdine.php?id="+idOrdine);
+
+      </script>
+    </main>
+  </body>
+</html>

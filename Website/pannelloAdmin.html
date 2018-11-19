@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+    <script src='js/checkes.js' type='text/javascript'></script>
+  </head>
+  <body>
+
+    <main>
+
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- FINE NAV BAR -->
+
+      <!-- CONTENUTO -->
+      <div class="container">
+        <div class="row">
+          <div class="col s12">
+            <ul class="tabs">
+              <li class="tab col s3"><a id="ordini" href="#Ordini">Ordini</a></li>
+              <li class="tab col s3"><a id="prodotti" href="#Prodotti">Prodotti</a></li>
+              <li class="tab col s3"><a id="categorie" href="#Categorie">Categorie</a></li>
+              <li class="tab col s3"><a id="utenti" href="#Utenti">Utenti</a></li>
+            </ul>
+          </div>
+
+          <div id="Ordini" class="col s12">
+            <br>
+            <div class="barra valign-wrapper">
+              <div class="col barra right-align">
+                <a id="inserisci" href="statistiche.html" class="waves-effect deep-purple waves-light btn-large"><i class="material-icons left">insert_chart</i>Statistiche ordini</a>          
+              </div>
+            </div>
+            <br>
+
+
+
+
+            <ul class="collection" id="listaOrdini">
+            </ul>
+          </div>
+
+
+          <div id="Prodotti" class="col s12">
+            <br>
+
+            <div class="barra valign-wrapper">
+              <div class="col s6 center">
+                Visualizza prodotti invisibili: 
+
+                <div class="switch">
+                  <label>
+                    No<input type="checkbox" id="invisibili"><span class="lever"></span>Sì
+                  </label>
+                </div>
+              </div>
+
+              <div class="col barra right-align">
+                <a id="inserisci" href="aggiungiProdotto.html" class="waves-effect blue waves-light btn-large"><i class="material-icons left">add_box</i>inserisci</a>          
+              </div>
+
+            </div>
+            <br>
+
+
+            <div id="eliminaProdotto" class="modal">
+              <form id="formEliminaProdotto" action="/API/eliminaProdotto.php" method="post">
+                <div class="modal-content">
+                  <h4 id="titoloElimina">Sei sicuro di voler nascondere il prodotto?</h4>
+                  <p id="paragrafoElimina">Facendo così il prodotto non verrà visualizzato da nessuno. E' comunque possibile riabilitarlo alla vendita.</p>
+
+                  <div class="input-field">
+                    <input hidden id="idProdottoElimina" type="text" name="id" class="validate">
+                    <label hidden for="idProdottoElimina">ID:</label>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn-flat waves-effect waves-light" type="submit" name="action">OK</button>
+                  <a href="#!" class="modal-close waves-effect waves-light btn-flat">ANNULLA</a>
+                </div>
+              </form>
+            </div>
+
+            <ul class="collection" id="listaProdotti">
+            </ul>
+
+            <ul class="pagination col" id="pagine">
+            </ul>
+
+          </div>
+
+
+          <div id="Categorie" class="col s12">
+            <br>
+
+            <div class="barra valign-wrapper">
+
+              <div class="col barra right-align">
+                <a id="inserisci" href="#inserisciCategoria" class="waves-effect blue waves-light btn-large modal-trigger"><i class="material-icons left">add_box</i>inserisci</a>          
+              </div>
+
+
+              <!-- MODALE ELIMINA CATEGORIA -->
+              <div id="eliminaCategoria" class="modal">
+                <form action="/API/eliminaCategoria.php" id="formEliminaCategoria" method="post">
+                  <div class="modal-content">
+                    <h4>Sei sicuro di voler eliminare la categoria?</h4>
+                    <p>Facendo così eliminarai la categoria dal database per sempre</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn-flat waves-effect waves-light" type="submit" name="action">Elimina</button>
+                    <a href="#!" class="modal-close waves-effect waves-light btn-flat">Annulla</a>
+                  </div>
+                </form>
+              </div>
+              <!-- FINE MODALE ELIMINA -->
+
+              <!-- MODALE INSERISCI CATEGORIA -->
+              <div id="inserisciCategoria" class="modal">
+                <form method="post" action="/API/aggiungiCategoria.php">
+                  <div class="modal-content">
+                    <h4>Inserisci il nome della categoria</h4>
+                    <div class="input-field">
+                      <input id="noneCategoria" type="text" name="nome" class="validate">
+                      <label for="noneCategoria">Nome</label>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn-flat waves-effect waves-light" type="submit" name="action">Inserisci</button>
+                    <a href="#!" class="modal-close waves-effect waves-light btn-flat">Annulla</a>
+                  </div>
+                </form>
+              </div>
+              <!-- FINE MODALE INSERISCI -->
+
+              <!-- MODALE MODIFICA CATEGORIA -->
+              <div id="modificaCategoria" class="modal">
+                <form method="post" id="formModificaCategoria" action="/API/modificaCategoria.php">
+                  <div class="modal-content">
+                    <h4>Modifica il nome della categoria</h4>
+                    <div class="input-field">
+                      <input id="nomeCategoria" type="text" name="nome" class="validate">
+                      <label for="nomeCategoria" id="lblNomeCategoria">Nome</label>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn-flat waves-effect waves-light" type="submit" name="action">Modifica</button>
+                    <a href="#!" class="modal-close waves-effect waves-light btn-flat">Annulla</a>
+                  </div>
+                </form>
+              </div>
+              <!-- FINE MODALE MODIFICA -->
+
+            </div>
+            <br>
+            <ul class="collection" id="listaCategorie">
+            </ul>
+          </div>
+
+          <div id="Utenti" class="col s12">
+            <ul class="collection" id="listaUtenti">
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+
+      <div id="footer">
+      </div>
+
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+
+    </main>
+
+    <script>
+
+      checkAdmin();
+      var url_string = window.location.href;
+      var url = new URL(url_string);
+
+      if(url.searchParams.get("inv") == 1){
+        $('#invisibili').prop('checked', true);
+      }
+      else $('#invisibili').prop('checked', false);
+
+      $(".switch").find("input[type=checkbox]").on("change",function() {
+        window.location.href = "pannelloAdmin.html?section=prodotti&page=1&inv=" + ($('#invisibili').prop('checked') ? 1 : 0);
+      });
+
+      loadOrdini();
+      loadProdotti();
+      loadCategorie();
+      loadUtenti();
+
+      function disabilitaProdotto(id){
+        $("#formEliminaProdotto").attr("action", "/API/disabilitaProdotto.php?id=" + id);
+        $("#titoloElimina").html("Sei sicuro di voler disabilitare il prodotto?");
+        $("#paragrafoElimina").html("Facendo così il prodotto non sarà visibile agli utenti.");
+      }
+
+      function abilitaProdotto(id){
+        $("#formEliminaProdotto").attr("action", "/API/abilitaProdotto.php?id=" + id);
+        $("#titoloElimina").html("Sei sicuro di voler abilitare il prodotto?");
+        $("#paragrafoElimina").html("Facendo così il prodotto tornerà ad essere visibile agli utenti.");
+      }
+
+      function eliminaCategoria(id){
+        $("#formEliminaCategoria").attr("action", "/API/eliminaCategoria.php?id=" + id);
+      }
+
+      function modificaCategoria(id, nome){
+        $("#formModificaCategoria").attr("action", "/API/modificaCategoria.php?id=" + id);
+        $("#nomeCategoria").val(nome);
+        $("#lblNomeCategoria").addClass("active");
+      }
+
+      function defaultImage(me){
+        me.src="/img/prodotti/non_disponibile.jpg";
+      }
+
+      function loadSelectedTab(){
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+
+        var tab = url.searchParams.get("section");
+
+        $("#"+tab).addClass("active");
+      }
+
+      function loadProdotti(){
+        var url_string = window.location.href;
+        var url = new URL(url_string);
+
+        var n = 20;
+        var page = url.searchParams.get("page");
+
+        if(page == null)
+          page = 1;
+
+        var invisibili = $('#invisibili').prop('checked') ? 1 : 0;
+
+        $.getJSON('/API/prodottiAdmin.php?page=' + page + '&n=' + n + '&inv=' + invisibili, function(data) {
+          colonne = 5;
+          righe = data.array.length / colonne;
+
+          inner = "";
+
+          for(var i = 0; i < data.array.length; i++){
+            inner += '<li class="collection-item avatar"><div class="barra row valign-wrapper"><img class="card-img-list" src="/img/prodotti/'+data.array[i].idProdotto+'" onerror="defaultImage(this);"></img><p>' + data.array[i].Marca + ' '  + data.array[i].Modello +'<br>Quantità: ' + data.array[i].Quantita + '<br>Descrizione: ' + data.array[i].Descrizione + '<br>Prezzo: ' + data.array[i].Prezzo + ' €</p><div class="secondary-content"><a href="modificaProdotto.html?id=' + data.array[i].idProdotto + '" class="waves-effect green waves-light btn">Modifica</a>';
+
+            if(data.array[i].Visibile == 1)
+              inner += '  <a href="#eliminaProdotto" class="waves-effect grey waves-light btn modal-trigger" onclick="disabilitaProdotto(' + data.array[i].idProdotto + ')">DISABILITA</a></div></div></li>';
+            else inner += '  <a href="#eliminaProdotto" class="waves-effect grey waves-light btn modal-trigger" onclick="abilitaProdotto(' + data.array[i].idProdotto + ')">ABILITA</a></div></div></li>';
+          }
+
+          $("#listaProdotti").html(inner);
+
+          var numTotale = data.num;
+          var pagine = numTotale/n + 1;
+
+          if(pagine > 1){
+            inner = "<li class='freccia waves-effect pag'><a href='#!'><i class='material-icons' onclick='frecciaIndietro(this)'>chevron_left</i></a></li>";
+            for(var i = 1; i <= pagine; i++){
+              inner += "<li class='waves-effect pag'><a onclick='clickPagination(this)'>" + i + "</a></li>"
+            }
+            inner += "<li class='freccia waves-effect pag' ><a onclick='frecciaAvanti(this)'><i class='material-icons'>chevron_right</i></a></li>";
+
+            $("#pagine").html(inner);
+
+            var temp = $("#pagine").children().toArray()[page];
+            $(temp).addClass("active");
+          }
+        });
+      }
+
+      function loadCategorie(){
+        $.getJSON("/API/categorie.php", function(data){
+          var inner = "";
+          for(var i=0; i<data.length; i++){
+            inner += '<li class="collection-item"><div class="row">' + data[i].Nome + '<div class="secondary-content"><a href="#modificaCategoria" onclick="modificaCategoria(' + data[i].idCategoria + ',&quot;' + data[i].Nome + '&quot;);" class="waves-effect green waves-light btn modal-trigger">Modifica</a>  <a href="#eliminaCategoria" class="waves-effect red waves-light btn modal-trigger" onclick="eliminaCategoria(' + data[i].idCategoria + ')">Elimina</a></div></li>'
+          }
+          $("#listaCategorie").html(inner);
+        });
+      }
+
+      function loadOrdini(){
+        $.getJSON("/API/mieiOrdini.php", function(data){
+          var inner = "";
+          for(var i=0; i<data.length; i++){
+            inner += '<li class="collection-item"><div class="row">Ordine id: ' + data[i].id + ' del ' + reverse(data[i].data) + '<div class="secondary-content"><a class="waves-effect green waves-light btn" href="modificaOrdine.html?id=' + data[i].id + '">Visualizza</a></div></li>'
+          }
+          $("#listaOrdini").html(inner);
+        });
+      }
+
+      function loadUtenti(){
+        $.getJSON("/API/utenti.php", function(data){
+          var inner = "";
+          for(var i=0; i<data.length; i++){
+            inner += '<li class="collection-item"><div class="row">' + data[i].Nome + ' ' + data[i].Cognome + '<div class="secondary-content"><a href="modificaUtente.html?id=' + data[i].idUtente + '" class="waves-effect green waves-light btn">Modifica</a></div></li>'
+          }
+          $("#listaUtenti").html(inner);
+        });
+      }
+
+
+      function clickPagination(data){
+        var page = data.innerHTML;
+        var n = 20
+
+        window.location.href = "pannelloAdmin.html?section=prodotti&n=" + n + "&page=" + page;
+      }
+
+      function frecciaAvanti(data){
+        var ora = $(".active.pag");
+        var succ = ora.next();
+
+        if(succ.hasClass("freccia"))
+          succ = succ.parent().children()[1];
+
+        $(ora).removeClass("active");
+        $(succ).addClass("active");
+
+        var page = $($(succ).html()).html();
+        var n = 20;
+
+        window.location.href = "pannelloAdmin.html?section=prodotti&n=" + n + "&page=" + page;
+      }
+
+      function frecciaIndietro(data){
+        var ora = $(".active.pag");
+        var prev = ora.prev();
+
+        if(prev.hasClass("freccia"))
+          prev = prev.parent().children()[prev.parent().children().length - 2];
+
+        $(ora).removeClass("active");
+        $(prev).addClass("active");
+
+        var page = $($(prev).html()).html();
+
+        var n = 20;
+
+        window.location.href = "pannelloAdmin.html?section=prodotti&n=" + n + "&page=" + page;
+      }
+
+      loadSelectedTab();
+      caricaCategorie();
+
+    </script>
+
+  </body>
+</html>

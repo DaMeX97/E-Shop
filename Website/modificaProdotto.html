@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+    <script src='js/checkes.js' type='text/javascript'></script>
+  </head>
+  <body>
+
+    <main>
+
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- FINE NAV BAR -->
+
+      <!-- CONTENUTO -->
+      <div class="container center-align">   
+        <div class="row">
+          <form enctype="multipart/form-data" id="form" class="col s12 center" method="post" action="/API/modificaProdotto.php">
+
+            <div class="input-field">
+              <input hidden id="idProdottoModifica" type="text" name="id" class="validate">
+              <label hidden for="idProdottoModifica">ID:</label>
+            </div>
+
+            <div class="center col s3">
+              <div class="input-field">
+                <input id="marca" type="text" class="validate" name="marca" required maxlength=45>
+                <label for="marca" id="lblMarca">Marca</label>
+              </div>
+            </div>
+            <div class="center col s3">
+              <div class="input-field">
+                <input id="modello" type="text" class="validate" name="modello" required maxlength=45>
+                <label for="modello" id="lblModello">Modello</label>
+              </div>
+            </div>
+
+            <div class="center col s3">
+              <div class="input-field">
+                <input id="prezzo" type="number" class="validate" step="0.01" name="prezzo" required>
+                <label for="prezzo" id="lblPrezzo">Prezzo</label>
+              </div>
+            </div>
+
+            <div class="center col s3">
+              <div class="input-field">
+                <input id="quantita" type="number" class="validate" name="quantita" required maxlength=45>
+                <label for="quantita" id="lblQuantita">Quantità</label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="file-field input-field col s6">
+                <input type='file' id="image" name="image"  title=" "/>
+                <img class="imgProdotto" id="immagine" src="/img/prodotti/non_disponibile.jpg" onerror="defaultImage(this);"/>
+              </div>
+
+              <div class="input-field col s6">
+                <input id="sigla" type="text" class="validate" name="sigla" required maxlength=45>
+                <label for="sigla" id="lblSigla">Sigla</label>
+              </div>
+
+              <div class="input-field col s6">
+                <textarea id="descrizione" class="materialize-textarea" name="descrizione" data-length="200" maxlength=200 required></textarea>
+                <label for="descrizione" id="lblDescrizione">Descrizione</label>
+              </div>
+            </div>
+
+            <div class="row valign-wrapper">
+              <div class="col s6 left-align">
+                Visibile <br>
+                <label>
+                  <input name="visibile" id="visibile" type="radio" checked value='1' />
+                  <span>Visibile</span>
+                </label>
+
+                <br>  
+
+                <label>
+                  <input name="visibile" id="invisibile" type="radio" value='0' />
+                  <span>Invisibile</span>
+                </label>
+
+              </div>
+
+              <div class="input-field col s6">
+                <select id="categoria" name="idCategoria" >
+
+                  <option value="">Option 3</option>
+                </select>
+                <label>Categoria</label>
+              </div>
+
+            </div> 
+
+            <div class="row">
+              <input type="submit" class="modal-close waves-effect btn blue lighten-2" value="Aggiorna"/>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+      <div id="footer">
+      </div>
+
+      <!-- FINE FOOTER -->
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+      <script>	
+      	checkAdmin();
+
+        caricaCategorie();
+
+        var url = new URL(window.location.href); // crea un oggetto di tipo URL con la stringa dell'URL
+        var id = url.searchParams.get("id"); // prende l'id dai parametri passati nell URL sopra
+
+        $("#idProdottoModifica").val(id);
+
+        $("#form").attr("action", "/API/modificaProdotto.php");
+        $.getJSON("/API/infoProdotto.php?id="+ id,function(data){
+          $(document).ajaxStop(function () {
+            $("#marca").val(data[0].Marca);
+            $("#lblMarca").addClass("active");
+
+            $("#modello").val(data[0].Modello);
+            $("#lblModello").addClass("active");
+
+            $("#descrizione").val(data[0].Descrizione);
+            $("#lblDescrizione").addClass("active");
+
+            $("#sigla").val(data[0].Sigla);
+            $("#lblSigla").addClass("active");
+
+            $("#quantita").val(data[0].Quantita);
+            $("#lblQuantita").addClass("active");
+
+            $("#prezzo").val(data[0].Prezzo);
+            $("#lblPrezzo").addClass("active");
+            $("#categoria").val("" + data[0].idCategoria + "");
+            $("#lblCategoria").addClass("active");
+            $('#categoria').formSelect();  
+
+            $("#immagine").attr("src", "/img/prodotti/" + data[0].idProdotto);
+
+            if(data[0].Visibile == 1)
+              $("#visibile").prop('checked',true);
+            else $("#invisibile").prop('checked',true);
+          });
+        }); // prende il risultato del file php e lo passa alla funzione function
+
+        // funzione caricamento immagine
+        function readURL(input) {
+          if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+              $('#immagine').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+          }
+        }
+
+        $("#image").change(function() {
+          readURL(this);
+        });
+
+      </script>
+
+    </main>
+  </body>
+</html>

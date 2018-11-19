@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+    <script src='js/checkes.js' type='text/javascript'></script>
+  </head>
+  <body>
+
+    <main>
+
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- FINE NAV BAR -->
+
+
+      <!-- CONTENUTO -->
+      <div class="container center-align">   
+
+        <h4>Vendite mensili</h4>
+        <canvas id="vendite"></canvas>
+
+        <h4>Fatturato mensile</h4>
+        <canvas id="fatturato"></canvas>
+
+
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+
+      <div id="footer">
+      </div>
+
+      <!-- FINE FOOTER -->
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+
+
+      <script>
+
+        checkAdmin();
+
+        $.getJSON("/API/statistiche.php", function(data){
+          var ctx = document.getElementById('vendite').getContext('2d');
+          var anni = [];
+
+          var mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+
+          for(var i = 0; i < data.length; i++){ // scorriamo i dati letti e poi li mettiamo nel grafico
+            var obj = data[i];
+            var d = obj.data.split('/');
+            
+            var temp = d[0];
+            d[0] = d[2];
+            d[2] = temp;
+            
+            var trovato = false;
+
+            for(var j=0; j<anni.length; j++){
+              if(anni[j].anno == d[2]){
+                anni[j].mesi[d[1]-1].vendite += obj.count;
+                anni[j].mesi[d[1]-1].fatturato += obj.totale;
+                trovato = true;
+              } 
+            }
+            if(!trovato){
+              var myOBJ = {};  // è oggetto vuoto in cui si può aggiungere campi quando si vuole
+              myOBJ.anno = d[2];
+              myOBJ.mesi = new Array(12);
+
+              for(var q = 0; q < 12; q++){
+                myOBJ.mesi[q] = { 'vendite' : 0, 'fatturato' : 0};
+              }
+
+              myOBJ.mesi[d[1]-1].vendite = obj.count;
+              myOBJ.mesi[d[1]-1].fatturato = obj.totale;
+
+              anni.push(myOBJ);
+            } 
+          }
+
+          var datasetsVendite = [];
+          var datasetsFatturato = [];
+          for(var i = 0; i < anni.length; i++){
+            var vendite = [];
+            var fatturato = [];
+            for(var j = 0; j < 12; j++){
+              vendite.push(anni[i].mesi[j].vendite);
+              fatturato.push(anni[i].mesi[j].fatturato);
+            }
+
+            var r = Math.floor(Math.random() * 1027 % 255);
+            var g = Math.floor(Math.random() * 789 % 255);
+            var b = Math.floor(Math.random() * 453 % 255);
+
+            var color = 'rgba(' + r + ',' + g + ',' + b + ', 0.5)';
+
+            var obj = {
+              label: anni[i].anno,
+              backgroundColor: color,
+              borderColor: color,
+              data: vendite,
+              lineTension: 0,
+            };
+
+            var obj2 = {
+              label: anni[i].anno,
+              backgroundColor: color,
+              borderColor: color,
+              data: fatturato,
+              lineTension: 0,
+            }
+
+            datasetsVendite.push(obj);
+            datasetsFatturato.push(obj2);
+          }
+
+          var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+            // The data for our dataset
+            data: {
+              labels: mesi,
+              datasets: datasetsVendite
+            },
+            // Configuration options go here
+            options: {
+              bezierCurve: false,
+              scales: {
+                yAxes: [{
+                  display: true,
+                  ticks: {
+                    beginAtZero: true   // minimum value will be 0.
+                  }
+                }]
+              }
+            }
+
+          });
+
+
+          ctx = document.getElementById('fatturato').getContext('2d');
+          var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'line',
+            // The data for our dataset
+            data: {
+              labels: mesi,
+              datasets: datasetsFatturato
+            },
+            // Configuration options go here
+            options: {
+              scales: {
+                yAxes: [{
+                  display: true,
+                  ticks: {
+                    beginAtZero: true   // minimum value will be 0.
+                  }
+                }]
+              }
+            }
+          });
+        });
+
+      </script>
+
+    </main>
+  </body>
+</html>

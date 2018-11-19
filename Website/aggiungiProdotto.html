@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <title>Progetto basi 2018 - Sito articoli elettronici</title>
+
+    <!-- CSS  -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen, projection"/>
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/init.js" type="text/javascript"></script>
+    <script src='js/checkes.js' type='text/javascript'></script>
+
+  </head>
+  <body>
+
+    <main>
+
+      <!-- NAV BAR -->
+      <div class="navbar-fixed" id="navbar">
+      </div>
+
+      <!-- FINE NAV BAR -->
+
+      <!-- CONTENUTO -->
+      <div class="container center-align">   
+        <div class="row">
+          <form enctype="multipart/form-data" class="col s12 center" method="post" action="/API/aggiungiProdotto.php">
+
+            <div class="center col s3">
+              <div class="input-field">
+                <input id="marca" type="text" class="validate" name="marca" required maxlength=45>
+                <label for="marca">Marca</label>
+              </div>
+            </div>
+            <div class="center col s3">
+              <div class="input-field">
+                <input id="modello" type="text" class="validate" name="modello" required maxlength=45>
+                <label for="modello">Modello</label>
+              </div>
+            </div>
+
+            <div class="center col s3">
+              <div class="input-field">
+                <input id="prezzo" type="number" class="validate" step="0.01" name="prezzo" required maxlength=45>
+                <label for="prezzo">Prezzo</label>
+              </div>
+            </div>
+
+            <div class="center col s3">
+              <div class="input-field">
+                <input id="quantita" type="number" class="validate" name="quantita" required>
+                <label for="quantita">Quantità</label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="file-field input-field col s6">
+                <input type='file' id="image" name="image" required maxlength=45/>
+                <img class="imgProdotto" id="immagine" src="/img/prodotti/non_disponibile.jpg"/>
+              </div>
+
+              <div class="input-field col s6">
+                <input id="sigla" type="text" class="validate" name="sigla" required maxlength=45>
+                <label for="sigla">Sigla</label>
+              </div>
+
+              <div class="input-field col s6">
+                <textarea id="descrizione" class="materialize-textarea" name="descrizione" data-length="200" required maxlength=200></textarea>
+                <label for="descrizione">Descrizione</label>
+              </div>
+            </div>
+
+            <div class="row valign-wrapper">
+              <div class="col s6 left-align">
+                Visibile <br>
+                <label>
+                  <input name="visibile" id="visibile" type="radio" checked value='1'/>
+                  <span>Visibile</span>
+                </label>
+
+                <br>  
+
+                <label>
+                  <input name="visibile" id="invisibile" type="radio" value='0' />
+                  <span>Invisibile</span>
+                </label>
+
+              </div>
+
+              <div class="input-field col s6">
+                <select id="categoria" name="idCategoria" >
+                  <option value="" disabled selected></option>
+                  <option value="3">Option 3</option>
+                </select>
+                <label>Categoria</label>
+              </div>
+
+            </div> 
+
+            <div class="row">
+              <input type="submit" class="modal-close waves-effect btn blue lighten-2" value="Inserisci"/>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- FINE CONTENUTO -->
+
+
+      <div id="footer">
+      </div>
+
+      <!-- FINE FOOTER -->
+
+      <!--  Scripts-->
+      <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+      <script src="js/materialize.js"></script>
+      <script>
+      	checkAdmin();
+      
+        // funzione caricamento immagine
+        function readURL(input) {
+          if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+              $('#immagine').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]);
+          }
+        }
+
+        $("#image").change(function() {
+          readURL(this);
+        });
+        
+        caricaCategorie();
+      </script>
+
+    </main>
+  </body>
+</html>
